@@ -38,7 +38,7 @@ app.use(function(req, res, next) {
 
   // intercept OPTIONS method
   if ('OPTIONS' == req.method) {
-    res.send(200);
+    res.sendStatus(200);
   }
   else {
     next();
@@ -48,7 +48,7 @@ app.use(function(req, res, next) {
 app.use('/', routes);
 
 app.use(function(req, res, next){
-  res.sendSstatus(403);
+  res.sendStatus(403);
 });
 
 // =======================

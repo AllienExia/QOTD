@@ -1,9 +1,9 @@
 var router = require('express').Router();
-//var userService = require('../services/userService');
+var authService = require('../services/auth.service');
 //var ldapService = require('../services/ldapService');
 //var jwtService = require('../services/jwt.service');
 
-var User = require('../models/user.model');
+var User = require('../models/admin.model');
 
 
 /*router.post('/', function(req, res) {
@@ -26,8 +26,7 @@ router.get('/', function(req, res) {
     login: 'romain',
     password: 'pass',
     firstname: 'Romain',
-    lastname: 'JANSSEN',
-    groups: []
+    lastname: 'JANSSEN'
   })
   .save()
   .then(function (err) {
@@ -36,7 +35,29 @@ router.get('/', function(req, res) {
   })
 });
 router.post('/', function(req, res) {
-  res.json({ success: true, message: err, user: user, token: jwtService.createToken(user, req.app.get('superSecret')) });
+  if (req.body.type == 'admin') {
+    authService.checkAdmin(req.body)
+    .then(admin => {
+      if (admin != null) {
+        res.json({ success: true, message: null, admin: admin, token: authService.createToken(admin, req.app.get('superSecret')) });
+      } else {
+        res.status(400).json({ success: false, message: 'Login ou mot de passe incorrect !', admin: admin, token: null });
+      }
+    })
+    .catch(err => {
+      res.status(400).json({error: err})
+    })
+  } else {
+    authService.checkClient(req.body)
+    .then(admin => {
+      res.json(admin)
+    })
+    .catch(err => {
+      res.status(400).json({error: err})
+    })
+  }
+  
+  //res.json({ success: true, message: err, user: user, token: jwtService.createToken(user, req.app.get('superSecret')) });
 });
 
 module.exports = router;
