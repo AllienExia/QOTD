@@ -1,0 +1,12 @@
+{
+  "development": {
+    "port": 88,
+    "secret": "agileaqotdproject",
+    "database": "mongodb://localhost:27017/qotd"
+  },
+  "production": {
+    "port": 88,
+    "secret": "agileaqotdproject",
+    "database": "mongodb://localhost:27017/qotd"
+  }
+}
