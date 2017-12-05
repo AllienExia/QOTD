@@ -4,7 +4,7 @@ var authService = require('../services/auth.service');
 //var jwtService = require('../services/jwt.service');
 
 var User = require('../models/admin.model');
-
+var Training = require('../models/training.model');
 
 /*router.post('/', function(req, res) {
   ldapService.authentication(req.body.login,req.body.pass, function (auth) {
@@ -22,11 +22,8 @@ var User = require('../models/admin.model');
 });*/
 router.get('/', function(req, res) {
   //var user = new User();
-  new User({
-    login: 'romain',
-    password: 'pass',
-    firstname: 'Romain',
-    lastname: 'JANSSEN'
+  new Training({
+    name: 'Formation 2'
   })
   .save()
   .then(function (err) {
@@ -56,8 +53,6 @@ router.post('/', function(req, res) {
       res.status(400).json({error: err})
     })
   }
-  
-  //res.json({ success: true, message: err, user: user, token: jwtService.createToken(user, req.app.get('superSecret')) });
 });
 
 module.exports = router;

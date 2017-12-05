@@ -20,7 +20,6 @@ router.use(function(req, res, next) {
       } else {
         // if everything is good, save to request for use in other routes
         req.decoded = decoded;    
-        console.log(decoded._doc.matricule + ' (' + decoded._doc.firstName + ' ' + decoded._doc.lastName + ') ' + req._parsedUrl.pathname + ' -> ' + req._startTime)
         next();
       }
     });
@@ -44,8 +43,8 @@ router.use('/celltype', require('./cellType'));
 router.use('/record', require('./record'));
 router.use('/cell', require('./cell'));
 router.use('/of', require('./of'));
-router.use('/event', require('./event'));
-router.use('/action', require('./action'));
-*/
+router.use('/event', require('./event'));*/
+router.use('/training', require('./training'));
+
 
 module.exports = router;
