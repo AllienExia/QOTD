@@ -4,7 +4,7 @@ var authService = require('../services/auth.service');
 //var jwtService = require('../services/jwt.service');
 
 var User = require('../models/admin.model');
-var Training = require('../models/training.model');
+var Training = require('../models/group.model');
 
 /*router.post('/', function(req, res) {
   ldapService.authentication(req.body.login,req.body.pass, function (auth) {
@@ -23,7 +23,10 @@ var Training = require('../models/training.model');
 router.get('/', function(req, res) {
   //var user = new User();
   new Training({
-    name: 'Formation 2'
+    start: new Date("19/12/2017"),
+    end: new Date("30/12/2017"),
+    name: "groupe 1",
+    training: "5a26fe663a895e5728fc7ab0"
   })
   .save()
   .then(function (err) {

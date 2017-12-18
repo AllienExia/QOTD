@@ -40,10 +40,10 @@ router.use(function(req, res, next) {
 router.use('/carac', require('./carac'));
 router.use('/cc', require('./cc'));
 router.use('/celltype', require('./cellType'));
-router.use('/record', require('./record'));
-router.use('/cell', require('./cell'));
-router.use('/of', require('./of'));
-router.use('/event', require('./event'));*/
+router.use('/record', require('./record'));*/
+router.use('/notification', require('./notification'));
+router.use('/chapter', require('./chapter'));
+router.use('/question', require('./question'));
 router.use('/training', require('./training'));
 
 

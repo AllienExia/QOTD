@@ -9,9 +9,11 @@ var config      = require('./config.json')[app.get('env')];
 var routes      = require('./routes');
 
 
+
 // =======================
 // =    Configuration    =
 // =======================
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.set('superSecret', config.secret); // secret variable
@@ -34,7 +36,7 @@ mongoose.connect(config.database, {
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header('Access-Control-Allow-Methods', req.headers['access-control-request-method']);
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-access-token, dashcode");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-access-token, dashcode, enctype");
 
   // intercept OPTIONS method
   if ('OPTIONS' == req.method) {
