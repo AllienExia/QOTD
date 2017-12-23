@@ -22,7 +22,19 @@ userSchema = new mongoose.Schema({
         required: true
     },
     groups: [{
-        group_id: mongoose.Schema.Types.ObjectId,
+        group: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Groups'
+        },
+        training: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Trainings'
+        },
+        chapter: [],
+        stats: {
+            numbers: [],
+            values: []
+        },
         questions : [{}]
 
     }]

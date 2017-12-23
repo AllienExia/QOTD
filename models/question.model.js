@@ -22,8 +22,7 @@ QuestionSchema = new mongoose.Schema({
         required: true
     },
     comment: {
-        type: String,
-        required: true
+        type: String
     },
     answer1: {
         type: String,

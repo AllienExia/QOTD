@@ -1,4 +1,5 @@
 var Admin = require('../models/admin.model');
+var User = require('../models/user.model');
 
 var jwt = require('jsonwebtoken');
 
@@ -18,10 +19,20 @@ function checkAdmin(params) {
 }
 function checkClient(params) {
     return new Promise(function(resolve, reject) {
-      Admin.findOne({"login": params.login, "password": params.password}).lean()
-      .exec(function (err, admin) {
+        User.findOne({"login": params.login, "password": params.password}).populate('groups.group').populate('groups.training').lean()
+      .exec(function (err, user) {
           if (err) reject(err);
-          else resolve(admin);
+          else {
+              if(user){
+                user.currentGroup = null
+                user.groups.forEach(element => {
+                    if(element.group.start < Date.now() && element.group.end > Date.now()) {
+                        user.currentGroup = element
+                    }
+                })
+              }
+              resolve(user);
+          }
       })
   }) 
 }

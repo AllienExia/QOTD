@@ -1,12 +1,11 @@
 var router = require('express').Router();
-var groupService = require('../../services/group.service');
-var Group = require('../../models/group.model');
+var userService = require('../../services/user.service');
 var notificationService = require('../../services/notification.service');
 
 router.get('/', function(req, res) {
-  groupService.getAllGroup()
-  .then(groups => {
-    res.json(groups)
+  userService.getAllUser()
+  .then(users => {
+    res.json(users)
   })
   .catch(err => {
     res.sendStatus(400).json({error: err})
@@ -14,10 +13,10 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  groupService.addGroup(req.body)
-  .then(group => {
+  userService.addUser(req.body)
+  .then(user => {
     res.sendStatus(201)
-    notificationService.addNotification(req, 'Ajout du groupe ' + req.body.name, 'add').then(question => {})
+    notificationService.addNotification(req, 'Ajout d\'un utilisateur', 'add').then(question => {})
   })
   .catch(err => {
     res.status(400).json({error: err})
@@ -25,9 +24,10 @@ router.post('/', function(req, res) {
 });
 
 router.patch('/', function(req, res) {
-  groupService.updateGroup(req.body)
-  .then(group => {
+  userService.updateUser(req.body)
+  .then(user => {
     res.sendStatus(200)
+    notificationService.addNotification(req, 'Modification d\'un utilisateur', 'update').then(question => {})
   })
   .catch(err => {
     res.status(400).json({error: err})
@@ -35,10 +35,10 @@ router.patch('/', function(req, res) {
 });
 
 router.delete('/', function(req, res) {
-  groupService.deleteGroup(req.query)
-  .then(group => {
+  userService.deleteUser(req.query)
+  .then(user => {
     res.sendStatus(200)
-    notificationService.addNotification(req, 'Suppression de ' + req.query.toDelete.length + ' groupe(s)', 'delete').then(question => {})
+    notificationService.addNotification(req, 'Suppression de ' + req.query.toDelete.length + ' utilisateur(s)', 'delete').then(question => {})
   })
   .catch(err => {
     res.status(400).json({error: err})

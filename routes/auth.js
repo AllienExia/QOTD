@@ -23,9 +23,9 @@ var Training = require('../models/group.model');
 router.get('/', function(req, res) {
   //var user = new User();
   new Training({
-    start: new Date("19/12/2017"),
-    end: new Date("30/12/2017"),
-    name: "groupe 1",
+    end: "2018-01-28",
+    name: "demo",
+    start: "2017-12-25",
     training: "5a26fe663a895e5728fc7ab0"
   })
   .save()
@@ -33,6 +33,10 @@ router.get('/', function(req, res) {
       console.log('ok')
       res.send('ok');
   })
+  .catch(function (err) {
+    console.log('ok')
+    res.send('ok');
+})
 });
 router.post('/', function(req, res) {
   if (req.body.type == 'admin') {
@@ -49,8 +53,14 @@ router.post('/', function(req, res) {
     })
   } else {
     authService.checkClient(req.body)
-    .then(admin => {
-      res.json(admin)
+    .then(user => {
+      if (user == null) {
+        res.status(400).json({ success: false, message: 'Login ou mot de passe incorrect !', user: user, token: null });
+      } else if (user.currentGroup == null) {
+        res.status(400).json({ success: false, message: 'Vous ne suivez aucune formation pour le moment', user: user, token: null });
+      } else {
+        res.json({ success: true, message: null, user: user, token: authService.createToken(user, req.app.get('superSecret')) });
+      } 
     })
     .catch(err => {
       res.status(400).json({error: err})

@@ -1,8 +1,9 @@
 var Group = require('../models/group.model');
+var Question = require('../models/question.model');
 
 function getAllGroup() {
     return new Promise(function(resolve, reject) {
-      Group.find({}).populate('training').lean()
+      Group.find({}).populate('training').populate('users').lean()
       .exec(function (err, groups) {
           if (err) reject(err);
           else resolve(groups);
@@ -10,20 +11,123 @@ function getAllGroup() {
   }) 
 }
 
+
+function parseDate(str) {
+    var mdy = str.split('-');
+    return new Date(mdy[0], mdy[1]-1, mdy[2]);
+}
+
+function daydiff(first, second) {
+    return Math.round((second-first)/(1000*60*60*24));
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+}
+function addDays(startDate,numberOfDays)
+{
+    var returnDate = new Date(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate()+numberOfDays,
+    startDate.getHours(),
+    startDate.getMinutes(),
+    startDate.getSeconds());
+    return returnDate;
+}
+
 function addGroup(params) {
+    var number = daydiff(parseDate(params.start), parseDate(params.end)) + 1
     return new Promise(function(resolve, reject) {
-        Group.findOne({training: params.training}).sort({number: '-1'})
-        .exec(function (err, group) {
+        Question.find({training: params.training}).sort({number: '1'}).limit(number).populate('training').lean()
+        .exec(function (err, questions) {
             if (err) reject(err);
-            else resolve(group);
+            else resolve(questions);
         })
   })
-  .then(group => {
+  .then(questions => {
+    var dateStart = parseDate(params.start)
     return new Promise(function(resolve, reject) {
-        if(group !== null) {
-            params.number = group._doc.number + 1
-        } else {
-            params.number = 1
+        params.questions = []
+        var tempQuestion = questions.slice(0)
+        var count = 1
+        tempQuestion.forEach(element => {
+            params.questions.unshift({
+                "training" : element.training,
+                "chapter" : element.chapter,
+                "number" : count,
+                "title" : element.title,
+                "comment" : element.comment,
+                "answer1" : element.answer1,
+                "answer2" : element.answer2,
+                "answer3" : element.answer3,
+                "answer4" : element.answer4,
+                "right" : element.right,
+                "date": addDays(dateStart, count-1),
+                "answered" : false,
+                "good": 0
+            })
+            count++
+        });
+        tempQuestion = null
+        tempQuestion = questions.slice(0)
+        if (params.questions.length < number) {
+            shuffle(tempQuestion)  
+            tempQuestion.forEach(element => {
+                if (params.questions.length < number) {
+                    params.questions.unshift({
+                        "training" : element.training,
+                        "chapter" : element.chapter,
+                        "number" : count,
+                        "title" : element.title,
+                        "comment" : element.comment,
+                        "answer1" : element.answer1,
+                        "answer2" : element.answer2,
+                        "answer3" : element.answer3,
+                        "answer4" : element.answer4,
+                        "right" : element.right,
+                        "date": addDays(dateStart, count),
+                        "answered" : false,
+                        "good": 0
+                    })
+                }
+                count++
+            });
+        } 
+        tempQuestion = null
+        tempQuestion = questions.slice(0)
+        if (params.questions.length < number) {
+            shuffle(tempQuestion)  
+            tempQuestion.forEach(element => {
+                if (params.questions.length < number) {
+                    params.questions.unshift({
+                        "training" : element.training,
+                        "chapter" : element.chapter,
+                        "number" : count,
+                        "title" : element.title,
+                        "comment" : element.comment,
+                        "answer1" : element.answer1,
+                        "answer2" : element.answer2,
+                        "answer3" : element.answer3,
+                        "answer4" : element.answer4,
+                        "right" : element.right,
+                        "date": addDays(dateStart, count),
+                        "answered" : false,
+                        "good": 0
+                    })
+                }
+                count++
+            });
         }
         new Group(params)
         .save(function (err, group) {

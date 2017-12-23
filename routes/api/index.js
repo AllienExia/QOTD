@@ -16,6 +16,7 @@ router.use(function(req, res, next) {
     // verifies secret and checks exp
     jwt.verify(token, req.app.get('superSecret'), function(err, decoded) {      
       if (err) {
+        // if (err = "jwt expired")
         return res.json({ success: false, message: 'Failed to authenticate token.' });    
       } else {
         // if everything is good, save to request for use in other routes
@@ -38,9 +39,9 @@ router.use(function(req, res, next) {
 
 /*router.use('/part', require('./part'));
 router.use('/carac', require('./carac'));
-router.use('/cc', require('./cc'));
-router.use('/celltype', require('./cellType'));
-router.use('/record', require('./record'));*/
+router.use('/cc', require('./cc'));*/
+router.use('/user', require('./user'));
+router.use('/groupe', require('./group'));
 router.use('/notification', require('./notification'));
 router.use('/chapter', require('./chapter'));
 router.use('/question', require('./question'));
