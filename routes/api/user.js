@@ -12,6 +12,16 @@ router.get('/', function(req, res) {
   })
 });
 
+/*router.get('/:id', function(req, res) {
+  userService.getOneUser()
+  .then(users => {
+    res.json(users)
+  })
+  .catch(err => {
+    res.sendStatus(400).json({error: err})
+  })
+});*/
+
 router.post('/', function(req, res) {
   userService.addUser(req.body)
   .then(user => {

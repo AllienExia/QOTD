@@ -14,6 +14,7 @@
     "express-fileupload": "^0.3.0",
     "jsonwebtoken": "^8.1.0",
     "mongoose": "^4.13.6",
-    "node-excel-to-json": "0.0.3"
+    "node-excel-to-json": "0.0.3",
+    "nodemailer": "^4.4.1"
   }
 }

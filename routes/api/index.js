@@ -38,8 +38,8 @@ router.use(function(req, res, next) {
 });
 
 /*router.use('/part', require('./part'));
-router.use('/carac', require('./carac'));
-router.use('/cc', require('./cc'));*/
+router.use('/carac', require('./carac'));*/
+router.use('/message', require('./message'));
 router.use('/user', require('./user'));
 router.use('/groupe', require('./group'));
 router.use('/notification', require('./notification'));
