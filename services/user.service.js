@@ -90,7 +90,7 @@ function answerQuestion(params) {
                     element._doc.stats.numbers.shift()
                     element._doc.stats.values.shift()
                 }
-                if (element._doc.stats.numbers.length === 1 && element._doc.stats.numbers.indexOf(0) === -1) {
+                if (element._doc.stats.numbers.indexOf(0) === -1) {
                     element._doc.stats.numbers.push(element._doc.stats.numbers.length+1)
                 }else {
                     element._doc.stats.numbers.push(element._doc.stats.numbers.length)
