@@ -19,7 +19,7 @@ router.post('/', function(req, res) {
   '<p><b>Le message porte sur : </b>' + req.body.choice + '</p>' +
   '<p style="white-space: pre;"><b>Message :</b><br>' + req.body.message + '</p>';
 
-  if (req.body.selectedQuestion) {
+  if (req.body.selectedQuestion.number) {
     messageContent += '<h3>Question en lien avec le message </h3>' +
     '<p style="white-space: pre;"><b>Numéro : </b>' + req.body.selectedQuestion.number + '</p>' +
     '<p style="white-space: pre;"><b>Titre : </b>' + req.body.selectedQuestion.title + '</p>' +
