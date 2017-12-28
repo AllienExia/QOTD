@@ -12,15 +12,15 @@ router.get('/', function(req, res) {
   })
 });
 
-/*router.get('/:id', function(req, res) {
-  userService.getOneUser()
-  .then(users => {
-    res.json(users)
+router.get('/:id', function(req, res) {
+  userService.getOneUser(req.params.id)
+  .then(user => {
+    res.json(user)
   })
   .catch(err => {
-    res.sendStatus(400).json({error: err})
+    res.status(400).json({error: err})
   })
-});*/
+});
 
 router.post('/', function(req, res) {
   userService.addUser(req.body)

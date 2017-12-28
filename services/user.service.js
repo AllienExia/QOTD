@@ -11,6 +11,26 @@ function getAllUser() {
   }) 
 }
 
+function getOneUser(id) {
+    return new Promise(function(resolve, reject) {
+      User.findOne({_id: id}).populate('groups.group').populate('groups.training').lean()
+      .exec(function (err, user) {
+        if (err) reject(err);
+        else {
+            if(user){
+            user.currentGroup = null
+            user.groups.forEach(element => {
+                if(element.group.start < Date.now() && element.group.end > Date.now()) {
+                    user.currentGroup = element
+                }
+            })
+            }
+            resolve(user);
+        }
+      })
+  }) 
+}
+
 function addUser(params) {
     return new Promise(function(resolve, reject) {
         params.user.groups = [{
@@ -48,7 +68,7 @@ function addUser(params) {
 
 function answerQuestion(params) {
     return new Promise(function(resolve, reject) {
-      User.findOne({ _id: params.user._id }).populate('groups.group').populate('groups.training')
+      User.findOne({ _id: params.user }).populate('groups.group').populate('groups.training').lean()
       .exec(function (err, user) {
           if (err) reject(err);
           else resolve(user);
@@ -57,8 +77,8 @@ function answerQuestion(params) {
   .then(user => {
     return new Promise(function(resolve, reject) {
         user.groups.forEach(element => {
-            if(element._doc.group._doc.start < Date.now() && element._doc.group._doc.end > Date.now()) {
-                element._doc.questions.forEach(question => {
+            if(element.group.start < Date.now() && element.group.end > Date.now()) {
+                element.questions.forEach(question => {
                     if(question.number === params.question.number) {
                         question.answered = true
                         question.answerDate = Date.now()
@@ -69,39 +89,39 @@ function answerQuestion(params) {
                             question.good = 0
                     }
                 })
-                var total = element._doc.questions.reduce((accumulator, currentValue) => {
+                var total = element.questions.reduce((accumulator, currentValue) => {
                     if (currentValue.answered === true) {
                         return accumulator + 1
                     } else {
                         return accumulator
                     }
                 }, 0)
-                var good = element._doc.questions.reduce((accumulator, currentValue) => {
+                var good = element.questions.reduce((accumulator, currentValue) => {
                     if (currentValue.answered === true && currentValue.good === 1) {
                         return accumulator + 1
                     } else {
                         return accumulator
                     }
                 }, 0)
-                if (element._doc.stats.numbers.length === 0) {
-                    element._doc.stats.numbers.push(0)
-                    element._doc.stats.values.push(100)
-                } else if(element._doc.stats.numbers.indexOf(0) !== -1){
-                    element._doc.stats.numbers.shift()
-                    element._doc.stats.values.shift()
+                if (element.stats.numbers.length === 0) {
+                    element.stats.numbers.push(0)
+                    element.stats.values.push(100)
+                } else if(element.stats.numbers.indexOf(0) !== -1){
+                    element.stats.numbers.shift()
+                    element.stats.values.shift()
                 }
-                if (element._doc.stats.numbers.indexOf(0) === -1) {
-                    element._doc.stats.numbers.push(element._doc.stats.numbers.length+1)
+                if (element.stats.numbers.indexOf(0) === -1) {
+                    element.stats.numbers.push(element.stats.numbers.length+1)
                 }else {
-                    element._doc.stats.numbers.push(element._doc.stats.numbers.length)
+                    element.stats.numbers.push(element.stats.numbers.length)
                 }
                 
-                element._doc.stats.values.push(parseInt((good / total * 100).toFixed(2)))
-                user._doc.currentGroup = {} 
-                user._doc.currentGroup = element._doc
+                element.stats.values.push(parseInt((good / total * 100).toFixed(2)))
+                user.currentGroup = {} 
+                user.currentGroup = element
             }
         })
-        User.where({ _id: params.user._id }).update({ $set: { groups: user.groups }})
+        User.where({ _id: params.user }).update({ $set: { groups: user.groups }})
         .exec(function (err, resul) {
             if (err) reject(err);
             else resolve(user);
@@ -187,6 +207,7 @@ function deleteUser(params) {
 
 var self = {
     getAllUser: getAllUser,
+    getOneUser: getOneUser,
     addUser: addUser,
     addGroupToUser: addGroupToUser,
     deleteUser: deleteUser,

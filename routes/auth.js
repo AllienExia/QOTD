@@ -59,7 +59,7 @@ router.post('/', function(req, res) {
       } else if (user.currentGroup == null) {
         res.status(400).json({ success: false, message: 'Vous ne suivez aucune formation pour le moment', user: user, token: null });
       } else {
-        res.json({ success: true, message: null, user: user, token: authService.createToken(user, req.app.get('superSecret')) });
+        res.json({ success: true, message: null, user: user, token: authService.createToken({firstname : user.firstname, lastname: user.lastname, login: user.login}, req.app.get('superSecret')) });
       } 
     })
     .catch(err => {

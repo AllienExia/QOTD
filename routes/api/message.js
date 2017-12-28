@@ -11,26 +11,32 @@ router.post('/', function(req, res) {
       }
     }
   );
+
+  var messageContent = '<h3>Détails du message </h3>' +
+  '<p><b>Message du participant : </b>' + req.body.user.firstname + ' ' + req.body.user.lastname + '</p>' +
+  '<p><b>Appartenant au groupe : </b>' + req.body.user.group + '</p>' +
+  '<p><b>Adresse mail du participant : </b>' + req.body.mail + '</p>' +
+  '<p><b>Le message porte sur : </b>' + req.body.choice + '</p>' +
+  '<p style="white-space: pre;"><b>Message :</b><br>' + req.body.message + '</p>';
+
+  if (req.body.selectedQuestion !== null) {
+    messageContent += '<h3>Question en lien avec le message </h3>' +
+    '<p style="white-space: pre;"><b>Numéro : </b>' + req.body.selectedQuestion.number + '</p>' +
+    '<p style="white-space: pre;"><b>Titre : </b>' + req.body.selectedQuestion.title + '</p>' +
+    '<p style="white-space: pre;"><b>Commentaire : </b>' + req.body.selectedQuestion.comment + '</p>' +
+    '<p style="white-space: pre;"><b>A) : </b>' + req.body.selectedQuestion.answer1 + '</p>' +
+    '<p style="white-space: pre;"><b>B) : </b>' + req.body.selectedQuestion.answer2 + '</p>' +
+    '<p style="white-space: pre;"><b>C) : </b>' + req.body.selectedQuestion.answer3 + '</p>' +
+    '<p style="white-space: pre;"><b>D) : </b>' + req.body.selectedQuestion.answer4 + '</p>' +
+    '<p style="white-space: pre;"><b>Bonne réponse : </b>' + req.body.selectedQuestion.right + '</p>' +
+    '<p style="white-space: pre;"><b>Réponse du candidat : </b>' + req.body.selectedQuestion.answer + '</p>'
+  }
+
   var mailOptions = {
       from: req.body.mail,
       to: "romain.janssen@viacesi.fr",
       subject: "Question de  " + req.body.user.firstname + ' ' + req.body.user.lastname,
-      html: '<h3>Détails du message </h3>' +
-      '<p><b>Message du participant : </b>' + req.body.user.firstname + ' ' + req.body.user.lastname + '</p>' +
-      '<p><b>Appartenant au groupe : </b>' + req.body.user.currentGroup.group.name + '</p>' +
-      '<p><b>Adresse mail du participant : </b>' + req.body.mail + '</p>' +
-      '<p><b>La question porte sur : </b>' + req.body.choice + '</p>' +
-      '<p style="white-space: pre;"><b>Message :</b><br>' + req.body.message + '</p>' +
-      '<h3>Question en lien avec le message </h3>' +
-      '<p style="white-space: pre;"><b>Numéro : </b>' + req.body.selectedQuestion.number + '</p>' +
-      '<p style="white-space: pre;"><b>Titre : </b>' + req.body.selectedQuestion.title + '</p>' +
-      '<p style="white-space: pre;"><b>Commentaire : </b>' + req.body.selectedQuestion.comment + '</p>' +
-      '<p style="white-space: pre;"><b>A) : </b>' + req.body.selectedQuestion.answer1 + '</p>' +
-      '<p style="white-space: pre;"><b>B) : </b>' + req.body.selectedQuestion.answer2 + '</p>' +
-      '<p style="white-space: pre;"><b>C) : </b>' + req.body.selectedQuestion.answer3 + '</p>' +
-      '<p style="white-space: pre;"><b>D) : </b>' + req.body.selectedQuestion.answer4 + '</p>' +
-      '<p style="white-space: pre;"><b>Bonne réponse : </b>' + req.body.selectedQuestion.right + '</p>' +
-      '<p style="white-space: pre;"><b>Réponse du candidat : </b>' + req.body.selectedQuestion.answer + '</p>'
+      html: messageContent
   };
   transporter.sendMail(mailOptions, function(error, info){
       if(error){
