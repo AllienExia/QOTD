@@ -2,7 +2,7 @@ var Question = require('../models/question.model');
 
 function getAllQuestion() {
     return new Promise(function(resolve, reject) {
-      Question.find({}).populate('training').lean()
+      Question.find({}).sort({number: '1'}).populate('training').lean()
       .exec(function (err, questions) {
           if (err) reject(err);
           else resolve(questions);

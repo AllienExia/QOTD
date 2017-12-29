@@ -33,22 +33,32 @@ function getOneUser(id) {
 
 function addUser(params) {
     return new Promise(function(resolve, reject) {
-        params.user.groups = [{
-            group: params.groupAdd._id,
-            training: params.groupAdd.questions[0].training._id,
-            chapter: params.chapters,
-            stats: {
-                numbers: [],
-                values: []
-            },
-            questions: params.groupAdd.questions
-        }]
-      new User(params.user)
-      .save(function (err, user) {
-          if (err) reject(err);
-          else resolve(user);
-      })
-  })
+        Group.findOne({_id: params.groupAdd})
+        .exec(function (err, group) {
+            if (err) reject(err);
+            else resolve(group);
+        })
+    })
+    .then(group => {
+        return new Promise(function(resolve, reject) {
+            params.groupAdd = group
+            params.user.groups = [{
+                group: params.groupAdd._id,
+                training: params.groupAdd.questions[0].training._id,
+                chapter: params.chapters,
+                stats: {
+                    numbers: [],
+                    values: []
+                },
+                questions: params.groupAdd.questions
+            }]
+            new User(params.user)
+            .save(function (err, user) {
+                if (err) reject(err);
+                else resolve(user);
+            })
+        })
+    })
   .then(user => {
     return new Promise(function(resolve, reject) {
         Group.findOne({_id: params.groupAdd._id})
