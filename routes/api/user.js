@@ -26,7 +26,7 @@ router.post('/', function(req, res) {
   userService.addUser(req.body)
   .then(user => {
     res.sendStatus(201)
-    notificationService.addNotification(req, 'Ajout de l\'utilisateur ' + user._doc.firstname + ' ' + user._doc.lastname, 'add').then(question => {})
+    notificationService.addNotification(req, 'Ajout de l\'utilisateur ' + req.body.user._doc.firstname + ' ' + req.body.user._doc.lastname, 'add').then(question => {})
   })
   .catch(err => {
     res.status(400).json({error: err})
