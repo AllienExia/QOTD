@@ -45,4 +45,15 @@ router.delete('/', function(req, res) {
   })
 });
 
+router.delete('/user', function(req, res) {
+  groupService.deleteUserFromGroup(req.query)
+  .then(data => {
+    res.sendStatus(200)
+    notificationService.addNotification(req, 'Suppression de ' + data.user.firstname + ' ' + data.user.lastname + ' du groupe ' + data.group.name, 'delete').then(question => {})
+  })
+  .catch(err => {
+    res.status(400).json({error: err})
+  })
+});
+
 module.exports = router;

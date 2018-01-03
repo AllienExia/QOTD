@@ -1,4 +1,5 @@
 var Group = require('../models/group.model');
+var User = require('../models/user.model');
 var Question = require('../models/question.model');
 
 function getAllGroup() {
@@ -169,12 +170,88 @@ function updateGroup(params) {
 
 function deleteGroup(params) {
     return new Promise(function(resolve, reject) {
-      Group.deleteMany({ _id: params.toDelete })
-      .exec(function (err, group) {
-          if (err) reject(err);
-          else resolve(group);
-      })
+        Group.find({_id: params.toDelete}).lean()
+        .exec(function (err, groups) {
+            if (err) reject(err);
+            else {
+                groups.forEach(groupElement => {
+                        User.find({_id: groupElement.users})
+                        .exec(function (err, usersToModify) {
+                            if (err) reject(err);
+                            else {
+                                usersToModify.forEach(user => {
+                                    for(var i = 0 ; i < user._doc.groups.length; i++) {
+                                        console.log(user._doc.groups[i]._doc._id.toString())
+                                        console.log(groupElement._id.toString())
+                                        if (user._doc.groups[i]._doc.group.toString() === groupElement._id.toString()) {
+                                            user._doc.groups.splice(i, 1)
+                                        }
+                                    }
+                                    User.where({ _id: user._doc._id }).update({ $set: { groups: user._doc.groups }})
+                                    .exec(function (err, updateGroup) {
+                                        if (err) reject(err);
+                                        else resolve(updateGroup);
+                                    })
+                                })
+                            }
+                    });
+                });
+            };
+        })
+
   }) 
+  .then(group => {
+    return new Promise(function(resolve, reject) {
+        Group.deleteMany({ _id: params.toDelete })
+        .exec(function (err, user) {
+            if (err) reject(err);
+            else resolve(user);
+        })
+    })
+  })
+}
+
+function deleteUserFromGroup(params) {
+    return new Promise(function(resolve, reject) {
+        User.findOne({_id: params.toDelete}).lean()
+        .exec(function (err, user) {
+            if (err) reject(err);
+            else {
+                for(var i = 0 ; i < user.groups.length; i++) {
+                    if (user.groups[i].group.toString() === params.group.toString()) {
+                        user.groups.splice(i, 1)
+                    }
+                }
+                User.where({ _id: user._id }).update({ $set: { groups: user.groups }})
+                .exec(function (err, updatedUser) {
+                    if (err) reject(err);
+                    else resolve(user);
+                })
+            };
+        })
+
+    }) 
+    .then(user => {
+        return new Promise(function(resolve, reject) {
+            Group.findOne({_id: params.group}).lean()
+            .exec(function (err, group) {
+                if (err) reject(err);
+                else {
+                    for(var i = 0 ; i < group.users.length; i++) {
+                        if (group.users[i].toString() === params.toDelete.toString()) {
+                            group.users.splice(i, 1)
+                        }
+                    }
+                    Group.where({ _id: params.group }).update({ $set: { users: group.users }})
+                    .exec(function (err, updatedGroup) {
+                        if (err) reject(err);
+                        else resolve({user : user, group: group});
+                    })
+                };
+            })
+    
+        }) 
+    })
 }
 
 function getAllChapterForTraining(params) {
@@ -194,7 +271,8 @@ var self = {
     addGroup: addGroup,
     updateGroup: updateGroup,
     deleteGroup: deleteGroup,
-    getAllChapterForTraining: getAllChapterForTraining
+    getAllChapterForTraining: getAllChapterForTraining,
+    deleteUserFromGroup: deleteUserFromGroup
 };
 
 module.exports = self;
