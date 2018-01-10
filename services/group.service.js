@@ -174,6 +174,9 @@ function deleteGroup(params) {
         .exec(function (err, groups) {
             if (err) reject(err);
             else {
+                if(groups.length === 0) {
+                    resolve(null);
+                }
                 groups.forEach(groupElement => {
                         User.find({_id: groupElement.users})
                         .exec(function (err, usersToModify) {
