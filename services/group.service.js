@@ -174,9 +174,6 @@ function deleteGroup(params) {
         .exec(function (err, groups) {
             if (err) reject(err);
             else {
-                if(groups.length === 0) {
-                    resolve(null);
-                }
                 groups.forEach(groupElement => {
                         User.find({_id: groupElement.users})
                         .exec(function (err, usersToModify) {
@@ -193,13 +190,13 @@ function deleteGroup(params) {
                                     User.where({ _id: user._doc._id }).update({ $set: { groups: user._doc.groups }})
                                     .exec(function (err, updateGroup) {
                                         if (err) reject(err);
-                                        else resolve(updateGroup);
                                     })
                                 })
                             }
                     });
                 });
             };
+            resolve(null);
         })
 
   }) 
