@@ -34,7 +34,7 @@ router.post('/', function(req, res) {
 
   var mailOptions = {
       from: req.body.mail,
-      to: "romain.janssen@viacesi.fr",
+      to: "agilea.formation@agilea.fr",
       subject: "Question de  " + req.body.user.firstname + ' ' + req.body.user.lastname,
       html: messageContent
   };
