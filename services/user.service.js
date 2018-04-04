@@ -3,7 +3,7 @@ var Group = require('../models/group.model');
 
 function getAllUser() {
     return new Promise(function(resolve, reject) {
-      User.find({}).populate('groups.group').populate('groups.training').lean()
+      User.find({}, '-groups').populate('groups.group').populate('groups.training').lean()
       .exec(function (err, users) {
           if (err) reject(err);
           else resolve(users);
@@ -142,21 +142,28 @@ function answerQuestion(params) {
 
 function addGroupToUser(params) {
     return new Promise(function(resolve, reject) {
-        params.user.groups.push({
-            group: params.groupAdd._id,
-            training: params.groupAdd.questions[0].training._id,
-            chapter: params.chapters,
-            stats: {
-                numbers: [],
-                values: []
-            },
-            questions: params.groupAdd.questions
+        User.findOne({_id: params.user._id}).populate('groups.group').populate('groups.training')
+        .exec(function (err, user) {
+            if (err) reject(err);
+            else {
+                user.groups.push({
+                    group: params.groupAdd._id,
+                    training: params.groupAdd.questions[0].training._id,
+                    chapter: params.chapters,
+                    stats: {
+                        numbers: [],
+                        values: []
+                    },
+                    questions: params.groupAdd.questions
+                })
+              User.where({ _id: user._id }).update({ $set: { groups: user.groups }})
+              .exec(function (err, user) {
+                  if (err) reject(err);
+                  else resolve(user);
+              })
+            }
         })
-      User.where({ _id: params.user._id }).update({ $set: { groups: params.user.groups }})
-      .exec(function (err, user) {
-          if (err) reject(err);
-          else resolve(user);
-      })
+        
   })
   .then(user => {
     return new Promise(function(resolve, reject) {
