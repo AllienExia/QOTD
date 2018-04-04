@@ -13,6 +13,16 @@ router.get('/', function(req, res) {
   })
 });
 
+router.get('/:id', function(req, res) {
+  groupService.getOneGroup(req.params.id)
+  .then(group => {
+    res.json(group)
+  })
+  .catch(err => {
+    res.status(400).json({error: err})
+  })
+});
+
 router.post('/', function(req, res) {
   groupService.addGroup(req.body)
   .then(group => {

@@ -4,7 +4,7 @@ var Question = require('../models/question.model');
 
 function getAllGroup() {
     return new Promise(function(resolve, reject) {
-      Group.find({}).populate('training').populate('users').lean()
+      Group.find({}, '-users').populate('training').lean()
       .exec(function (err, groups) {
           if (err) reject(err);
           else resolve(groups);
@@ -12,6 +12,17 @@ function getAllGroup() {
   }) 
 }
 
+function getOneGroup(id) {
+    return new Promise(function(resolve, reject) {
+      Group.findOne({_id: id}).populate('training').populate('users').lean()
+      .exec(function (err, group) {
+        if (err) reject(err);
+        else {
+            resolve(group);
+        }
+      })
+  }) 
+}
 
 function parseDate(str) {
     var mdy = str.split('-');
@@ -268,6 +279,7 @@ function getAllChapterForTraining(params) {
 
 var self = {
     getAllGroup: getAllGroup,
+    getOneGroup: getOneGroup,
     addGroup: addGroup,
     updateGroup: updateGroup,
     deleteGroup: deleteGroup,
