@@ -24,6 +24,18 @@ function getOneGroup(id) {
   }) 
 }
 
+function getGroupOfTraining(id) {
+    return new Promise(function(resolve, reject) {
+      Group.find({training: id}).populate('training').populate('users').lean()
+      .exec(function (err, groups) {
+        if (err) reject(err);
+        else {
+            resolve(groups);
+        }
+      })
+  }) 
+}
+
 function parseDate(str) {
     var mdy = str.split('-');
     return new Date(mdy[0], mdy[1]-1, mdy[2]);
@@ -280,6 +292,7 @@ function getAllChapterForTraining(params) {
 var self = {
     getAllGroup: getAllGroup,
     getOneGroup: getOneGroup,
+    getGroupOfTraining: getGroupOfTraining,
     addGroup: addGroup,
     updateGroup: updateGroup,
     deleteGroup: deleteGroup,
