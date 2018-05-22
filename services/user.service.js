@@ -146,39 +146,37 @@ function addGroupToUser(params) {
         .exec(function (err, user) {
             if (err) reject(err);
             else {
-                user.groups.push({
-                    group: params.groupAdd._id,
-                    training: params.groupAdd.questions[0].training._id,
-                    chapter: params.chapters,
-                    stats: {
-                        numbers: [],
-                        values: []
-                    },
-                    questions: params.groupAdd.questions
+                Group.findOne({_id: params.groupAdd})
+                .exec(function (err, group) {
+                    if (err) reject(err);
+                    else {
+                        group.users.push(user._id)
+                        group.save(function (err, group){
+                            if (err) reject(err);
+                            else {
+                                user.groups.push({
+                                    group: group._id,
+                                    training: group.questions[0].training._id,
+                                    chapter: params.chapters,
+                                    stats: {
+                                        numbers: [],
+                                        values: []
+                                    },
+                                    questions: group.questions
+                                })
+                              User.where({ _id: user._id }).update({ $set: { groups: user.groups }})
+                              .exec(function (err, user) {
+                                  if (err) reject(err);
+                                  else resolve(user);
+                              })
+                            }
+                        })
+                    }
                 })
-              User.where({ _id: user._id }).update({ $set: { groups: user.groups }})
-              .exec(function (err, user) {
-                  if (err) reject(err);
-                  else resolve(user);
-              })
+                
             }
         })
         
-  })
-  .then(user => {
-    return new Promise(function(resolve, reject) {
-        Group.findOne({_id: params.groupAdd})
-        .exec(function (err, group) {
-            if (err) reject(err);
-            else {
-                group.users.push(params.user._id)
-                group.save(function (err, group){
-                    if (err) reject(err);
-                    else resolve(group);
-                })
-            }
-        })
-    })
   })
 }
 
