@@ -142,7 +142,7 @@ function answerQuestion(params) {
 
 function addGroupToUser(params) {
     return new Promise(function(resolve, reject) {
-        User.findOne({_id: params.user._id}).populate('groups.group').populate('groups.training')
+        User.findOne({_id: params.user}).populate('groups.group').populate('groups.training')
         .exec(function (err, user) {
             if (err) reject(err);
             else {
@@ -167,7 +167,7 @@ function addGroupToUser(params) {
   })
   .then(user => {
     return new Promise(function(resolve, reject) {
-        Group.findOne({_id: params.groupAdd._id})
+        Group.findOne({_id: params.groupAdd})
         .exec(function (err, group) {
             if (err) reject(err);
             else {
